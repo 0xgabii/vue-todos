@@ -13,22 +13,22 @@
           placeholder="create todo..."
           v-model="newTodo"
           @keyup.enter="addTodo">  
-      </div>
-      <ul class="todos">
-        <transition-group name="fade">
-          <li :key="index" v-for="(todo, index) in filterdTodos">
-            <input 
-              type="checkbox" 
-              :id="'chkbox' + index"
-              v-model="todo.complete">
-            <label :for="'chkbox' + index"></label>
-            <span 
-              :contenteditable="true" 
-              @blur="editTodo(todo, $event)">{{todo.text}}</span>
-            <button @click="deleteTodo(todo)">✖</button>
-          </li>
-        </transition-group>
-      </ul> 
+      </div>      
+      <transition-group name="fade-todo" tag="ul">
+        <li v-for="todo in filterdTodos"
+          class="todos"                     
+          :key="todo.index">
+          <input 
+            type="checkbox" 
+            :id="'chkbox' + todo.index"
+            v-model="todo.complete">
+          <label :for="'chkbox' + todo.index"></label>
+          <span 
+            :contenteditable="true" 
+            @blur="editTodo(todo, $event)">{{todo.text}}</span>
+          <button @click="deleteTodo(todo)">✖</button>
+        </li>
+      </transition-group>
       <transition name="fade">
         <div class="todos-control"  v-show="todos.length">
           <span>{{ remaining }} items left</span>
@@ -67,6 +67,7 @@ export default {
       newTodo: '',
       todos: [
         {
+          index: 0,
           text: 'Practice Vue.js',
           complete: false
         }
@@ -99,8 +100,9 @@ export default {
   },
   methods:{
     addTodo() {
-      if(!this.newTodo.trim()) return;
+      if(!this.newTodo.trim()) return;      
       this.todos.push({
+        index: this.todos.length,
         text: this.newTodo,
         complete: false
       });
@@ -127,17 +129,23 @@ export default {
   /* transition-group css */
   .fade-enter-active,
   .fade-leave-active {
-    transition: all 0.3s
+    transition: all 0.5s
   }
   .fade-enter,
-  .fade-leave-to{    
+  .fade-leave-to {
+    transform: scale(0.7);   
     opacity: 0;
   }
-  .fade-enter{
-    transform: translateX(-1rem);
+  .todos{
+    transition: all 0.8s;
   }
-  .fade-leave-to {
-    transform: translateX(1rem);    
+  .fade-todo-enter{
+    opacity: 0;
+    transform: translateY(-1.5rem);
+  }
+  .fade-todo-leave-to{
+    opacity: 0;
+    transform: translateX(1.5rem);
   }
   /* Component css */
   .wrapper{
@@ -208,20 +216,18 @@ export default {
     font-size: 1.8rem;
     transition: all 0.2s;
   }
-  .todos{
-    list-style: none;
-  }
-  .todos li{
+  .todos{    
     position: relative;
     padding: 0.9rem 0.9rem 0.9rem 3.3rem;
+    list-style: none;
     border-bottom: 1px solid lightgray;
     font-size: 1.5rem;
   }
-  .todos li > span{    
+  .todos > span{    
     position: relative;
     transition: all 0.2s;
   }
-  .todos li > span:after{
+  .todos > span:after{
     content: '';
     display: block;
     margin: auto;
@@ -233,14 +239,14 @@ export default {
     background-color: transparent;   
     transition: all 0.5s;
   }
-  .todos li > input[type="checkbox"]:checked ~ span{
+  .todos > input[type="checkbox"]:checked ~ span{
     color: lightgray;
   }
-  .todos li > input[type="checkbox"]:checked ~ span:after{
+  .todos > input[type="checkbox"]:checked ~ span:after{
     width: 100%;
     background-color: lightgray;
   }
-  .todos li > button{
+  .todos > button{
     position: absolute;
     right: 0;
     top: 3%;
@@ -254,7 +260,7 @@ export default {
     cursor: pointer;
     transition: all 0.2s;      
   }
-  .todos li:hover > button{
+  .todos:hover > button{
     opacity: 1;
   }
   .todos-control{
