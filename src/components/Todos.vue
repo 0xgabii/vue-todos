@@ -14,8 +14,8 @@
           v-model="newTodo"
           @keyup.enter="addTodo">  
       </div>
-      <ul class="todos" v-show="todos.length > 0">
-        <li v-for="(todo, index) in todos">
+      <ul class="todos" v-show="todos.length">
+        <li v-for="(todo, index) in filterdTodos">
           <input 
             type="checkbox" 
             :id="'chkbox' + index"
@@ -27,10 +27,15 @@
           <button @click="deleteTodo(todo)">✖</button>
         </li>
       </ul> 
-      <div class="todos-control"  v-show="todos.length > 0">
-        <span>{{ todos.filter((data) => data.complete==false).length }} items left</span>
+      <div class="todos-control"  v-show="todos.length">
+        <span>{{ remaining }} items left</span>
+        <ul>
+          <li 
+            v-for="filter in filters"
+            :class="{active: filter === filterType}" @click="filterChange(filter)">{{ filter }}</li>
+        </ul>
         <button
-          v-show="todos.filter((data) => data.complete==true).length > 0"
+          :style="{opacity: todos.length > remaining ? 1 : 0}"
           @click="removeCompletedTodo">Clear completed</button>
       </div>
     </div>            
@@ -38,6 +43,18 @@
 </template>
 
 <script>
+const filters = {
+  all: (todos) => {
+    return todos;
+  },
+  active: (todos) => {
+    return todos.filter(data => !data.complete);
+  },
+  completed: (todos) => {
+    return todos.filter((data) => data.complete);
+  },
+}
+
 export default {
   name: 'todos',
   data() {
@@ -49,13 +66,25 @@ export default {
           text: 'Practice Vue.js',
           complete: false
         }
-      ]      
+      ],
+      filters: [
+        'all',
+        'active',
+        'completed'
+      ],
+      filterType: 'all'
     }
   },  
   computed:{
+    filterdTodos() {
+      return filters[this.filterType](this.todos);
+    },
+    remaining() {
+      return filters.active(this.todos).length;
+    },
     completeAll: {
       get(){
-        return this.todos.filter(data => data.complete === false).length === 0; 
+        return this.remaining === 0; 
       },
       set(value){
         this.todos.forEach(data => { 
@@ -80,7 +109,10 @@ export default {
       this.todos.splice(this.todos.indexOf(todo), 1);
     },
     removeCompletedTodo() {
-      this.todos = this.todos.filter(data => data.complete == false);
+      this.todos = filters.active(this.todos);
+    },
+    filterChange(filter) {
+      this.filterType = filter;
     }
   }
 }
@@ -89,7 +121,7 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   .wrapper{
-    width: 30rem;  
+    width: 35rem;  
     margin: 12rem auto;
   }
   h1{    
@@ -210,6 +242,21 @@ export default {
     justify-content: space-between;
     padding: 0.9rem;
   }
+  .todos-control > ul{
+    list-style: none;
+  }
+  .todos-control > ul > li{
+    display: inline-block;
+    padding: 0 0.5rem;
+    color: gray;
+    text-transform: capitalize;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .todos-control > ul > li:hover,
+  .todos-control > ul > li.active{
+    color: black;
+  }
   .todos-control > button{
     position: relative;
     background-color: transparent;
@@ -217,6 +264,7 @@ export default {
     outline: none;
     font-size: 1rem;
     color: gray;
+    transition: all 0.3s;
   }
   .todos-control > button:hover{
     text-decoration: underline;
