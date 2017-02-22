@@ -14,31 +14,35 @@
           v-model="newTodo"
           @keyup.enter="addTodo">  
       </div>
-      <ul class="todos" v-show="todos.length">
-        <li v-for="(todo, index) in filterdTodos">
-          <input 
-            type="checkbox" 
-            :id="'chkbox' + index"
-            v-model="todo.complete">
-          <label :for="'chkbox' + index"></label>
-          <span 
-            :contenteditable="true" 
-            @blur="editTodo(todo, $event)">{{todo.text}}</span>
-          <button @click="deleteTodo(todo)">✖</button>
-        </li>
+      <ul class="todos">
+        <transition-group name="fade">
+          <li :key="index" v-for="(todo, index) in filterdTodos">
+            <input 
+              type="checkbox" 
+              :id="'chkbox' + index"
+              v-model="todo.complete">
+            <label :for="'chkbox' + index"></label>
+            <span 
+              :contenteditable="true" 
+              @blur="editTodo(todo, $event)">{{todo.text}}</span>
+            <button @click="deleteTodo(todo)">✖</button>
+          </li>
+        </transition-group>
       </ul> 
-      <div class="todos-control"  v-show="todos.length">
-        <span>{{ remaining }} items left</span>
-        <ul>
-          <li 
-            v-for="filter in filters"
-            :class="{active: filter === filterType}" @click="filterChange(filter)">{{ filter }}</li>
-        </ul>
-        <button
-          :style="{opacity: todos.length > remaining ? 1 : 0}"
-          @click="removeCompletedTodo">Clear completed</button>
-      </div>
-    </div>            
+      <transition name="fade">
+        <div class="todos-control"  v-show="todos.length">
+          <span>{{ remaining }} items left</span>
+          <ul>
+            <li v-for="filter in filters"
+              :class="{active: filter === filterType}" 
+              @click="filterChange(filter)">{{ filter }}</li>
+          </ul>
+          <button
+            :style="{opacity: todos.length > remaining ? 1 : 0}"
+            @click="removeCompletedTodo">Clear completed</button>
+        </div>
+      </transition>
+    </div>         
   </div>
 </template>
 
@@ -120,6 +124,22 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+  /* transition-group css */
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: all 0.3s
+  }
+  .fade-enter,
+  .fade-leave-to{    
+    opacity: 0;
+  }
+  .fade-enter{
+    transform: translateX(-1rem);
+  }
+  .fade-leave-to {
+    transform: translateX(1rem);    
+  }
+  /* Component css */
   .wrapper{
     width: 35rem;  
     margin: 12rem auto;
@@ -191,17 +211,17 @@ export default {
   .todos{
     list-style: none;
   }
-  .todos > li{
+  .todos li{
     position: relative;
     padding: 0.9rem 0.9rem 0.9rem 3.3rem;
     border-bottom: 1px solid lightgray;
     font-size: 1.5rem;
   }
-  .todos > li > span{    
+  .todos li > span{    
     position: relative;
     transition: all 0.2s;
   }
-  .todos > li > span:after{
+  .todos li > span:after{
     content: '';
     display: block;
     margin: auto;
@@ -213,14 +233,14 @@ export default {
     background-color: transparent;   
     transition: all 0.5s;
   }
-  .todos > li > input[type="checkbox"]:checked ~ span{
+  .todos li > input[type="checkbox"]:checked ~ span{
     color: lightgray;
   }
-  .todos > li > input[type="checkbox"]:checked ~ span:after{
+  .todos li > input[type="checkbox"]:checked ~ span:after{
     width: 100%;
     background-color: lightgray;
   }
-  .todos > li > button{
+  .todos li > button{
     position: absolute;
     right: 0;
     top: 3%;
@@ -234,7 +254,7 @@ export default {
     cursor: pointer;
     transition: all 0.2s;      
   }
-  .todos > li:hover > button{
+  .todos li:hover > button{
     opacity: 1;
   }
   .todos-control{
