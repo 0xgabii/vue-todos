@@ -1,9 +1,12 @@
 <template>
   <div class="wrapper">
-    <h1>{{ msg }}</h1>
+    <h1>{{ welcome }}</h1>
     <div class="todos-box">
       <div class="todos-input-box">        
-        <input id="toggleAll" type="checkbox">
+        <input 
+          type="checkbox"
+          id="toggleAll"           
+          v-model="completeAll">
         <label for="toggleAll"></label>
         <input 
           class="todos-input"
@@ -13,13 +16,17 @@
       </div>
       <ul class="todos" v-show="todos.length > 0">
         <li v-for="(todo, index) in todos">
-          <input :id="'chkbox' + index" type="checkbox">
+          <input 
+            type="checkbox" 
+            :id="'chkbox' + index"
+            v-model="todo.complete">
           <label :for="'chkbox' + index"></label>
           <span>{{todo.text}}</span>
+          <button @click="deleteTodo(todo)">✖</button>
         </li>
-      </ul>
+      </ul> 
       <div class="todos-state" v-show="todos.length > 0">            
-        {{ todos.length }} items left
+        {{ todos.filter((data) => data.complete==false).length }} items left
       </div>
     </div>            
   </div>
@@ -30,20 +37,39 @@ export default {
   name: 'todos',
   data() {
     return {
-      msg: 'To-do list',
+      welcome: 'To-do list',
       newTodo: '',
       todos: [
-        {text: 'Practice Vue.js'}
-      ]
+        {
+          text: 'Practice Vue.js',
+          complete: false
+        }
+      ]      
     }
   },  
+  computed:{
+    completeAll: {
+      get(){
+        return this.todos.filter(data => data.complete === false).length === 0; 
+      },
+      set(value){
+        this.todos.forEach(data => { 
+          data.complete = value
+        });
+      }
+    }
+  },
   methods:{
     addTodo() {
       if(!this.newTodo.trim()) return;
       this.todos.push({
-        text: this.newTodo
+        text: this.newTodo,
+        complete: false
       });
       this.newTodo = '';
+    },
+    deleteTodo(todo) {
+      this.todos.splice(this.todos.indexOf(todo), 1);
     }
   }
 }
@@ -66,7 +92,7 @@ export default {
   }
   .todos-input-box{
     position: relative;    
-    background-color: rgba(0,0,0,0.01);
+    background-color: #fff;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
   }
   input[type="checkbox"]{
@@ -119,9 +145,6 @@ export default {
     font-size: 1.8rem;
     transition: all 0.2s;
   }
-  .todos-input:focus{
-    background-color: #fff;
-  }
   .todos{
     list-style: none;
   }
@@ -153,6 +176,23 @@ export default {
   .todos > li > input[type="checkbox"]:checked ~ span:after{
     width: 100%;
     background-color: lightgray;
+  }
+  .todos > li > button{
+    position: absolute;
+    right: 0;
+    top: 3%;
+    padding: 0.9rem 1.5rem;        
+    background-color: transparent;
+    border:none;    
+    outline: none;
+    font-size: 1.25rem;    
+    color: gray;
+    opacity: 0;  
+    cursor: pointer;
+    transition: all 0.2s;      
+  }
+  .todos > li:hover > button{
+    opacity: 1;
   }
   .todos-state{
     padding: 0.9rem;
