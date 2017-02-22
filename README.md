@@ -2,6 +2,18 @@
 
 > A Vue.js project
 
+## 버그인지 안된건지 모르겠지만 기록...
+
+### transition-group 사용해서 v-for에 효과를 줄 때
+
+아래와 같이 v-for의 index를 key로 지정하면 아래쪽만 transition되는 버그가 있는 듯 하다 (index값은 정상적으로 나온다!)
+``` javascript
+<li 
+  v-for="(todo, index) in todos"
+  :key="index"></li>
+```
+해결법) v-for를 돌릴 data 배열에 key 컬럼을 지정해주면 된다. 
+
 ## Build Setup
 
 ``` bash
