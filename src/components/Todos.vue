@@ -21,12 +21,17 @@
             :id="'chkbox' + index"
             v-model="todo.complete">
           <label :for="'chkbox' + index"></label>
-          <span>{{todo.text}}</span>
+          <span 
+            :contenteditable="true" 
+            @blur="editTodo(todo, $event)">{{todo.text}}</span>
           <button @click="deleteTodo(todo)">✖</button>
         </li>
       </ul> 
-      <div class="todos-state" v-show="todos.length > 0">            
-        {{ todos.filter((data) => data.complete==false).length }} items left
+      <div class="todos-control"  v-show="todos.length > 0">
+        <span>{{ todos.filter((data) => data.complete==false).length }} items left</span>
+        <button
+          v-show="todos.filter((data) => data.complete==true).length > 0"
+          @click="removeCompletedTodo">Clear completed</button>
       </div>
     </div>            
   </div>
@@ -68,8 +73,14 @@ export default {
       });
       this.newTodo = '';
     },
+    editTodo(todo, e) {
+      this.todos[this.todos.indexOf(todo)].text = e.target.textContent;      
+    },
     deleteTodo(todo) {
       this.todos.splice(this.todos.indexOf(todo), 1);
+    },
+    removeCompletedTodo() {
+      this.todos = this.todos.filter(data => data.complete == false);
     }
   }
 }
@@ -194,7 +205,20 @@ export default {
   .todos > li:hover > button{
     opacity: 1;
   }
-  .todos-state{
+  .todos-control{
+    display: flex;
+    justify-content: space-between;
     padding: 0.9rem;
+  }
+  .todos-control > button{
+    position: relative;
+    background-color: transparent;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    color: gray;
+  }
+  .todos-control > button:hover{
+    text-decoration: underline;
   }
 </style>
