@@ -1,6 +1,7 @@
 # vue-todos
 
-> A Vue.js project
+![gif](vue-todo.gif "todo gif")
+
 
 ## 버그인지 안된건지 모르겠지만 기록...
 
