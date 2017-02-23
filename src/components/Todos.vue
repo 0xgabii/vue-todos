@@ -127,6 +127,23 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   /* transition-group css */
+  .todos{
+    height: 3.5rem; 
+  }
+  .fade-todo-enter-active{
+    transition: height 0.5s,
+                opacity 1s;  
+  }  
+  .fade-todo-leave-active{
+    transition: height 0.5s,
+                opacity 0.3s;  
+  }
+  .fade-todo-enter,
+  .fade-todo-leave-to{
+    height: 0;
+    opacity: 0;    
+  }
+
   .fade-enter-active,
   .fade-leave-active {
     transition: all 0.5s
@@ -135,17 +152,6 @@ export default {
   .fade-leave-to {
     transform: scale(0.7);   
     opacity: 0;
-  }
-  .todos{
-    transition: all 0.8s;
-  }
-  .fade-todo-enter{
-    opacity: 0;
-    transform: translateY(-1.5rem);
-  }
-  .fade-todo-leave-to{
-    opacity: 0;
-    transform: translateX(1.5rem);
   }
   /* Component css */
   .wrapper{
@@ -218,13 +224,17 @@ export default {
   }
   .todos{    
     position: relative;
-    padding: 0.9rem 0.9rem 0.9rem 3.3rem;
     list-style: none;
     border-bottom: 1px solid lightgray;
     font-size: 1.5rem;
   }
   .todos > span{    
-    position: relative;
+    display: inline-block;
+    padding: 0.8rem 0.5rem;
+    margin-left: 3.3rem;
+    position: relative;        
+    top: 50%;        
+    transform: translateY(-50%);
     transition: all 0.2s;
   }
   .todos > span:after{
