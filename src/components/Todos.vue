@@ -15,14 +15,14 @@
           @keyup.enter="addTodo">  
       </div>      
       <transition-group name="fade-todo" tag="ul">
-        <li v-for="todo in filterdTodos"
+        <li v-for="(todo, index) in filterdTodos"
           class="todos"                     
-          :key="todo.index">
+          :key="todo">
           <input 
             type="checkbox" 
-            :id="'chkbox' + todo.index"
+            :id="'chkbox' + index"
             v-model="todo.complete">
-          <label :for="'chkbox' + todo.index"></label>
+          <label :for="'chkbox' + index"></label>
           <span 
             :contenteditable="true" 
             @blur="editTodo(todo, $event)">{{todo.text}}</span>
@@ -67,7 +67,6 @@ export default {
       newTodo: '',
       todos: [
         {
-          index: 0,
           text: 'Practice Vue.js',
           complete: false
         }
@@ -102,7 +101,6 @@ export default {
     addTodo() {
       if(!this.newTodo.trim()) return;      
       this.todos.push({
-        index: this.todos.length,
         text: this.newTodo,
         complete: false
       });
@@ -144,13 +142,16 @@ export default {
     opacity: 0;    
   }
 
+  .todos-control{
+    height: 2.5rem;
+  }
   .fade-enter-active,
   .fade-leave-active {
     transition: all 0.5s
   }
   .fade-enter,
   .fade-leave-to {
-    transform: scale(0.7);   
+    height: 0;
     opacity: 0;
   }
   /* Component css */
@@ -274,9 +275,10 @@ export default {
     opacity: 1;
   }
   .todos-control{
-    display: flex;
-    justify-content: space-between;
-    padding: 0.9rem;
+    display: flex;    
+    padding: 0 0.8rem;
+    align-items: center;
+    justify-content: space-between;    
   }
   .todos-control > ul{
     list-style: none;
