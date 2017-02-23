@@ -12,7 +12,7 @@
   v-for="(todo, index) in todos"
   :key="index"></li>
 ```
-~~해결법) v-for를 돌릴 data 배열에 key 컬럼을 지정해주면 된다.~~
+~~해결법) v-for를 돌릴 data 배열에 key 컬럼을 지정해주면 된다.~~<br>
 해결법) key에 리스트의 item을 넣어준다 (공식 문서에 친절하게 나와있드라 ㅠㅠ..)
 
 
